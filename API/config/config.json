@@ -1,0 +1,18 @@
+{
+  "application": {
+    "port": 5002,
+    "jwtKey": "w7EFfrcHfWAvs+R1erxb5k0oEiUcs1s9D1vzJ1pRP9GDg/2NQkrtrj35Ss13v93/"
+  },
+  "s3": {
+    "bucketName": "boxappdocuments",
+    "region": "ap-south-1",
+    "accessKey": "AKIA54LCE2KYOQGQLEOA",
+    "secretAccessKey": "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",
+    "url": "https://boxappdocuments.s3.ap-south-1.amazonaws.com/kycdocs/"
+  },
+  "tenants": [
+    {
+      "databaseURL": "mongodb+srv://sabarishbalasubramanian:UXpg3UIKn4w9zDOf@cluster0.r7uge42.mongodb.net/"
+    }
+  ]
+}

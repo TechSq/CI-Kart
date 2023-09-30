@@ -1,0 +1,1284 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "CI API",
+    "description": "API List for CI APP",
+    "version": "v1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:{port}/api/{apiVersion}",
+      "variables": {
+        "port": {
+          "default": "5002",
+          "enum": ["5002"]
+        },
+        "apiVersion": {
+          "default": "v1",
+          "enum": ["v1"],
+          "description": "Api Version"
+        }
+      }
+    }
+  ],
+  "tags": [
+    {
+      "name": "User",
+      "description": "User API's"
+    },
+    {
+      "name": "Product",
+      "description": "Product, Category, SubCategory API's"
+    },
+    {
+      "name": "Common",
+      "description": "Common API's"
+    },
+    {
+      "name": "Admin",
+      "description": "Admin API's"
+    },
+    {
+      "name": "Vendor",
+      "description": "Vendor API's"
+    },
+    {
+      "name": "Customer",
+      "description": "Customer API's"
+    },
+    {
+      "name": "Affiliate",
+      "description": "Affliate API's"
+    }
+  ],
+  "paths": {
+    "/users/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Get user by user name",
+        "description": "",
+        "operationId": "getUserByName",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/users/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["User"],
+        "description": "Register a new user with the provided information.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "userType": {
+                    "type": "string",
+                    "enum": ["Vendor", "Admin", "User"]
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "pattern": "^[0-9]{10}$"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 50,
+                    "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["Male", "Female", "Other"]
+                  }
+                },
+                "required": [
+                  "firstName",
+                  "lastName",
+                  "email",
+                  "phoneNumber",
+                  "password",
+                  "dob",
+                  "gender",
+                  "userType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registration successful"
+          },
+          "400": {
+            "description": "Bad request. Invalid input data."
+          },
+          "409": {
+            "description": "Conflict. User already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/customers/social/{provider}": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Get Social Login For Google and Facebook",
+        "description": "",
+        "operationId": "getUserSocialDetails",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "description": "Providers like",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["google", "facebook"]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/GoogleLogin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/FacebookLogin"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/customers/secure/wishlist/{productId}": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Add Product to the wishlist",
+        "description": "",
+        "operationId": "addToWishlist",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product Uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order Placed Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Customer"],
+        "summary": "Remove Product to the wishlist",
+        "description": "",
+        "operationId": "removeFromWishlist",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product Uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order Placed Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/customers/secure/wishlist": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Get All Wishlist Items",
+        "description": "",
+        "operationId": "getWishlist",
+        "responses": {
+          "200": {
+            "description": "Order Placed Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/customers/secure/cart": {
+      "get": {
+        "tags": ["Customer"],
+        "summary": "Get customer cart ",
+        "description": "",
+        "operationId": "addUpdateItemToCustomerCart",
+
+        "responses": {
+          "200": {
+            "description": "Get Customer Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/customers/secure/cart/{productId}": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Add or Update Product to customer cart ",
+        "description": "",
+        "operationId": "addUpdateItemToCustomerCart",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product Uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "quantity",
+            "in": "query",
+            "description": "Quanity of an Item",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item Added to the order",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": ["Customer"],
+        "summary": "Remove Item to Existing Order ",
+        "description": "",
+        "operationId": "removeItemToExistingCart",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "Product Uuid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item Removed from the cart",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/customers/secure/cart/placeorder": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Place the Order requires customer login",
+        "description": "",
+        "operationId": "placeOrder",
+        "responses": {
+          "200": {
+            "description": "Order Placed Successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/customers/secure/cart/apply-coupon/{couponCode}": {
+      "post": {
+        "tags": ["Customer"],
+        "summary": "Apply coupon to the Order ",
+        "description": "",
+        "operationId": "applyCouponCode",
+        "parameters": [
+          {
+            "name": "couponCode",
+            "in": "path",
+            "description": "Coupon Code from coupons api",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Coupon Applied",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/common/upload/s3/{folder}": {
+      "post": {
+        "summary": "Upload a file to S3",
+        "tags": ["Common"],
+        "consumes": ["multipart/form-data"],
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "folder",
+            "in": "path",
+            "description": "Folder",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "required": ["file"]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Success",
+                  "data": {
+                    "$metadata": {
+                      "httpStatusCode": 200,
+                      "requestId": "7DBNJ35QXK11DDVJ",
+                      "extendedRequestId": "Zd1KYGHigP8Di6Q4M+ciMimUMFoaBeeAaAjXtdxgakNvpUio2eqyFLD3aJXld2Z0Ma8WvbfvMyc=",
+                      "attempts": 1,
+                      "totalRetryDelay": 0
+                    },
+                    "ETag": "\"a557b51c9e58fdf44b0f094307473c67\"",
+                    "ServerSideEncryption": "AES256",
+                    "VersionId": "tRArkN3lsff364h8E9HnUngwI59oZURv",
+                    "Bucket": "boxappdocuments",
+                    "Key": "profile/1694328504870-pexels-pixabay-220453.jpg",
+                    "Location": "https://boxappdocuments.s3.ap-south-1.amazonaws.com/profile/1694328504870-pexels-pixabay-220453.jpg"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/common/attribute/getAll": {
+      "get": {
+        "summary": "Get All Attributes",
+        "tags": ["Common"],
+        "description": "Register a new user with the provided information.",
+
+        "responses": {
+          "200": {
+            "description": "User registration successful"
+          },
+          "400": {
+            "description": "Bad request. Invalid input data."
+          },
+          "409": {
+            "description": "Conflict. User already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/common/attribute/addAddtributeGroup": {
+      "post": {
+        "summary": "Add new Attribute",
+        "tags": ["Common"],
+        "description": "Register a new user with the provided information.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "attributeName": {
+                    "type": "string"
+                  },
+                  "values": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/AttributeValue"
+                    }
+                  },
+                  "isSingle": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "values",
+                  "attributeName",
+                  "email",
+                  "phoneNumber",
+                  "password",
+                  "dob",
+                  "gender",
+                  "userType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registration successful"
+          },
+          "400": {
+            "description": "Bad request. Invalid input data."
+          },
+          "409": {
+            "description": "Conflict. User already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/common/categories": {
+      "get": {
+        "summary": "Get All Categories",
+        "tags": ["Common"],
+        "description": "",
+
+        "responses": {
+          "200": {
+            "description": "User registration successful"
+          },
+          "400": {
+            "description": "Bad request. Invalid input data."
+          },
+          "409": {
+            "description": "Conflict. User already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/common/subcategories": {
+      "get": {
+        "summary": "Get All Sub Categories",
+        "tags": ["Common"],
+        "description": "",
+
+        "responses": {
+          "200": {
+            "description": "User registration successful"
+          },
+          "400": {
+            "description": "Bad request. Invalid input data."
+          },
+          "409": {
+            "description": "Conflict. User already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/categories/add_category": {
+      "post": {
+        "tags": ["Product"],
+        "summary": "Get user by user name",
+        "description": "",
+        "operationId": "getUserByName",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Category"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/Category"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/products/list_products": {
+      "get": {
+        "tags": ["Product"],
+        "summary": "Get List of products",
+        "description": "",
+        "operationId": "getProducts",
+        "responses": {
+          "200": {
+            "description": "Login Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CategoryResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/admin/coupon/getall": {
+      "get": {
+        "summary": "Get All Coupons",
+        "tags": ["Admin"],
+        "description": "",
+
+        "responses": {
+          "200": {
+            "description": "User registration successful"
+          },
+          "400": {
+            "description": "Bad request. Invalid input data."
+          },
+          "409": {
+            "description": "Conflict. User already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    },
+    "/admin/coupon/addcoupon": {
+      "post": {
+        "summary": "Add new Attribute",
+        "tags": ["Admin"],
+        "description": "Register a new user with the provided information.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "couponName": {
+                    "type": "string"
+                  },
+                  "discountType": {
+                    "type": "string",
+                    "enum": ["Percentage", "Amount"]
+                  },
+                  "discountValue": { "type": "number" }
+                },
+                "required": ["couponName", "discountType", "discountValue"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registration successful"
+          },
+          "400": {
+            "description": "Bad request. Invalid input data."
+          },
+          "409": {
+            "description": "Conflict. User already exists."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Category": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string",
+            "example": ""
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": ""
+          },
+          "description": {
+            "type": "string",
+            "example": ""
+          }
+        }
+      },
+      "GoogleLogin": {
+        "type": "object",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "example": "70460303476-hd387gtknrrsa8n3b86b0mnp9rcmdcpq.apps.googleusercontent.com"
+          },
+          "credential": {
+            "type": "string",
+            "example": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjgzOGMwNmM2MjA0NmMyZDk0OGFmZmUxMzdkZDUzMTAxMjlmNGQ1ZDEiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiI3MDQ2MDMwMzQ3Ni1oZDM4N2d0a25ycnNhOG4zYjg2YjBtbnA5cmNtZGNwcS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsImF1ZCI6IjcwNDYwMzAzNDc2LWhkMzg3Z3RrbnJyc2E4bjNiODZiMG1ucDlyY21kY3BxLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29tIiwic3ViIjoiMTAyNjg1MjQxODcwMzI1OTk3NTA5IiwiZW1haWwiOiJoYXJpc2htYW5vaGFyYW45MEBnbWFpbC5jb20iLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmJmIjoxNjk0NTQwNjY3LCJuYW1lIjoiSGFyaXNoIE1hbm9oYXJhbiIsInBpY3R1cmUiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BQ2c4b2NJSWFscXl1Z2lRdmVmQ3RfaWxJc3lhNlZfdzBuTlZGX0hRME1tak1ERmhGVkE9czk2LWMiLCJnaXZlbl9uYW1lIjoiSGFyaXNoIiwiZmFtaWx5X25hbWUiOiJNYW5vaGFyYW4iLCJsb2NhbGUiOiJlbiIsImlhdCI6MTY5NDU0MDk2NywiZXhwIjoxNjk0NTQ0NTY3LCJqdGkiOiI3M2NiM2IwMWJhODFiOTRkNzcyOGNiMzIzY2Q5NjJmNjlhNWFmNWYxIn0.fbq2MiLUWuY4U9VMAxUXAQa1B2aN4BXPbN-QzmDvOy_1pacx7G0W1ZOuqz1uWZ9-KekEIjcDnbd_QrrUrnVg6wpnAv8L608nzuucxRKC4f3E9mCvodg4XL3PRVrJvpGBcWeB0edObKjs74lu3uJI9CHWTD-U8ls5lDHyNSkXitBihYDCf3DfVgR6jSET6zBryrjIn2oZ65pMF2CR2d1P_pVQlZkxPVtBEBoBoRrFfVqr_iMX3L4uhvU_h2XFm0qfBs2GeLuvGziS4xHxHr6yuiZ_ShRGf2AVPoRBBpm0e-JBVMZrkaWueHUgXrLTTSJVSqxN_hYnPvBG-uIN3muV-g"
+          },
+          "select_by": { "type": "string", "example": "btn" }
+        }
+      },
+      "FacebookLogin": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "EAAMIulEzqpgBO8wFFi5a86ZAwjYwFoElCyNeZCWuwoQdDfQlEJFZAbJ6wUkkQmGk5HKqSMpefGdmnctrLI9VjFJVAVjJnuyGZBsqxGffPuZADQgzsQIbwWwzcwT6VKpeaCmEdFa5LBAupy2XPqrCb8YMXHw9wGfL6kts9EfbNTZAupeWL6OR1p8uZAQ5zZATkf4PZBt9fTNzUUpLmi4TtsxYrUzyNij0ZD"
+          },
+          "data_access_expiration_time": {
+            "type": "integer",
+            "example": 1702316992
+          },
+          "expiresIn": {
+            "type": "integer",
+            "example": 4208
+          },
+          "graphDomain": {
+            "type": "string",
+            "example": "graphDomain"
+          },
+          "id": { "type": "string", "example": "1711463805944640" },
+          "email": {
+            "type": "string",
+            "example": "harishmanoharan90@gmail.com"
+          },
+          "name": {
+            "type": "string",
+            "example": "Harish Manoharan"
+          },
+          "picture": {
+            "type": "object",
+            "properties": {
+              "data": {
+                "type": "object",
+                "properties": {
+                  "height": {
+                    "type": "integer",
+                    "example": 50
+                  },
+                  "is_silhouette": {
+                    "type": "boolean",
+                    "example": false
+                  },
+                  "url": {
+                    "type": "string",
+                    "example": "https://platform-lookaside.fbsbx.com/platform/profilepic/?asid=1711463805944640&height=50&width=50&ext=1697132993&hash=AeRggcdJzgg_kX-m6Xg"
+                  },
+                  "width": {
+                    "type": "integer",
+                    "example": 50
+                  }
+                }
+              }
+            }
+          },
+          "userID": {
+            "type": "string",
+            "example": "1711463805944640"
+          },
+          "signedRequest": {
+            "type": "string",
+            "example": "isPMq674mkBE_DKbIuU79xs2Phh2xO5uSwJZOkSfKo4.eyJ1c2VyX2lkIjoiMTcxMTQ2MzgwNTk0NDY0MCIsImNvZGUiOiJBUUREWm9JQWJ1QU9aeEUzdmlzZVgzUDZPeWR4dHN6bjJQMDVobjd1S2JyOTlHLXh3US1KWUw0TW12VTlaR0lxUVZBZ202N0hFZ3VwYW9pM1FXX2ZGTllrRnBxZ2ljNnF1Mmh6emx2SW1rNHZUWWNJUVpGNXRXekdRRTNPeW0tRTIyalNiYXhRdm5hUUdrU2I0U3lZbXlnTWhoRDZBMlhxaF9QTDRPdDBaYW1DRWdOSlBMWjRNaVViRExGaTQyZzg3REplbWgzaWROZ2RwaC1wdmdBSU9WRmRnalRaT2wybkV1cXJkcnBEQUR2YXBBZWxQcEVWYVZDZVh3M2MyU21mMl9EYWI1N0hMazlDQml4LUw1ci1rT0NOOHhCR0RYQ195XzItZnE0b0oyV1R5QmVwUVNoaTNuaGRfSERFcGhSMzlTZWc1eXZydFM0eWJIZ2F6ME8zd0JWYSIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjoxNjk0NTQwOTkyfQ"
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "properties": {
+          "emailOrPhoneNumber": {
+            "type": "string",
+            "example": "admin@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Admin"
+          },
+          "userType": {
+            "type": "string",
+            "enum": ["Admin", "Vendor", "User"]
+          }
+        },
+        "xml": {
+          "name": "login"
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "token": {
+                "type": "string"
+              },
+              "user": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "userUuid": {
+                    "type": "string"
+                  },
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "userName": {
+                    "type": "string"
+                  },
+                  "userType": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "dob": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": ["Male", "Female", "Other"]
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "pattern": "^[0-9]{10}$"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
+                  "isActive": {
+                    "type": "boolean"
+                  },
+                  "isDeleted": {
+                    "type": "boolean"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "__v": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "_id",
+                  "userUuid",
+                  "firstName",
+                  "lastName",
+                  "userName",
+                  "userType",
+                  "email",
+                  "dob",
+                  "gender",
+                  "phoneNumber",
+                  "password",
+                  "isActive",
+                  "isDeleted",
+                  "createdAt",
+                  "updatedAt",
+                  "__v"
+                ]
+              }
+            },
+            "required": ["token", "user"]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["success", "data", "message"]
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "##default"
+        }
+      },
+      "AttributeValue": {
+        "type": "object",
+        "properties": {
+          "attributeValue": { "type": "string" },
+          "additionalValue": { "type": "string" }
+        }
+      },
+      "CategoryResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "categoryUuid": {
+                "type": "string"
+              },
+              "categoryName": {
+                "type": "string"
+              },
+              "categoryId": {
+                "type": "string"
+              },
+              "imageUrl": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "isActive": {
+                "type": "boolean"
+              },
+              "isDeleted": {
+                "type": "boolean"
+              },
+              "createdBy": {
+                "type": "string"
+              },
+              "updatedBy": {
+                "type": "string"
+              },
+              "_id": {
+                "type": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "__v": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "categoryUuid",
+              "categoryName",
+              "categoryId",
+              "imageUrl",
+              "description",
+              "isActive",
+              "isDeleted",
+              "createdBy",
+              "updatedBy",
+              "_id",
+              "createdAt",
+              "updatedAt",
+              "__v"
+            ]
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["success", "data", "message"]
+      }
+    },
+    "requestBodies": {
+      "Pet": {
+        "description": "Pet object that needs to be added to the store",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Pet"
+            }
+          },
+          "application/xml": {
+            "schema": {
+              "$ref": "#/components/schemas/Pet"
+            }
+          }
+        }
+      },
+      "UserArray": {
+        "description": "List of user object",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

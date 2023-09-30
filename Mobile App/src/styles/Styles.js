@@ -1,0 +1,206 @@
+import {StyleSheet} from 'react-native';
+
+module.exports = StyleSheet.create({
+  boldText: {
+    color: 'white',
+    fontFamily: 'Inter-SemiBold',
+  },
+  para: {
+    color: 'white',
+    fontFamily: 'Inter-Regular',
+  },
+  small: {
+    fontSize: 8,
+    color: 'white',
+    fontFamily: 'Inter-Regular',
+  },
+  span: {
+    fontSize: 10,
+    color: 'white',
+    fontFamily: 'Inter-Regular',
+  },
+  //buttons
+  pinkButton: {
+    backgroundColor: '#FD007F',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    height: 40,
+  },
+  smallpinkButton: {
+    backgroundColor: '#FD007F',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+    height: 25,
+  },
+  authButton: {
+    backgroundColor: '#005FAC',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    height: 40,
+    color: 'white',
+  },
+  outlineButton: {
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#707378',
+    borderRadius: 20,
+    height: 40,
+    color: 'black',
+    borderWidth: 1,
+  },
+  blackButton: {
+    backgroundColor: 'black',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    height: 40,
+    color: 'white',
+  },
+  smallblackButton: {
+    backgroundColor: 'black',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 7,
+    height: 30,
+    color: 'white',
+  },
+  blueButton: {
+    backgroundColor: '#1FDEB9',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    height: 40,
+  },
+  smallblueButton: {
+    backgroundColor: '#1FDEB9',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 7,
+    height: 30,
+  },
+  emptyButton: {
+    backgroundColor: 'transparent',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 8,
+    borderColor: '#707378',
+    borderWidth: 1,
+    height: 40,
+  },
+  buttonText: {
+    color: 'white',
+    fontFamily: 'Inter-SemiBold',
+  },
+  modalHeading: {
+    color: 'white',
+    fontSize: 23,
+    fontFamily: 'Inter-SemiBold',
+  },
+  linkText: {
+    color: '#56F5FF',
+    textAlign: 'center',
+    textDecorationColor: '#56F5FF',
+    textDecorationLine: 'underline',
+    textDecorationStyle: 'solid',
+    fontFamily: 'Inter-Regular',
+  },
+  input: {
+    borderRadius: 8,
+    color: 'white',
+    paddingHorizontal: '3%',
+    width: '95%',
+    fontFamily: 'Inter-Regular',
+    height: 45,
+  },
+  inputBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#1A1819',
+    borderRadius: 8,
+    paddingRight: '2.5%',
+  },
+  text: {
+    color: 'white',
+    textAlign: 'left',
+    fontFamily: 'Inter-Regular',
+  },
+  normalText: {
+    fontFamily: 'Inter-Regular',
+  },
+  mediumText: {
+    fontFamily: 'Inter-Medium',
+  },
+  overlayView: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+  },
+  textLight: {
+    color: 'white',
+    opacity: 0.8,
+    fontFamily: 'Inter-Regular',
+  },
+  //card
+  card: {
+    backgroundColor: 'rgba(82, 76, 79, 0.6)',
+    borderRadius: 10,
+  },
+  //flex
+  center: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  start: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  between: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  end: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  around: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+  },
+  //modal
+  centerModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCard: {
+    backgroundColor: 'rgba(82, 76, 79, 0.6)',
+    borderRadius: 10,
+    padding: '5%',
+    shadowColor: 'rgba(118, 1, 60, 0.1)',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.12,
+    shadowRadius: 60,
+    elevation: 70,
+  },
+});

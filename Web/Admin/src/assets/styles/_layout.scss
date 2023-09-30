@@ -1,0 +1,9 @@
+/* Layouts */
+
+.navbar {
+  &.fixed-top {
+    + .page-body-wrapper {
+      padding-top: $horizontal-navbar-height;
+    }
+  }
+}
